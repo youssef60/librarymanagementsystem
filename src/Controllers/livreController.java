@@ -4,7 +4,7 @@
  */
 package Controllers;
 
-import Dao.livreRegulierDao;
+import Dao.LivreDao;
 import Models.ResultSetModel;
 import Models.livreModel;
 import Util.ValidationUtil;
@@ -13,9 +13,9 @@ import Util.ValidationUtil;
  *
  * @author MHD
  */
-public class livreController {
+public class LivreController {
     livreModel livre = new livreModel();
-    livreRegulierDao dao = new livreRegulierDao();
+    LivreDao dao = new LivreDao();
     ResultSetModel model = new ResultSetModel();
     ValidationUtil validation = new ValidationUtil(); 
 
@@ -27,11 +27,11 @@ public class livreController {
         this.livre = livre;
     }
 
-    public livreRegulierDao getDao() {
+    public LivreDao getDao() {
         return dao;
     }
 
-    public void setDao(livreRegulierDao dao) {
+    public void setDao(LivreDao dao) {
         this.dao = dao;
     }
 

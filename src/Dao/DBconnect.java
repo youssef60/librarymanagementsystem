@@ -26,7 +26,7 @@ public class DBconnect {
 
 }
        public static Connection getConnection() throws SQLException{
-             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarymanagementsystem" ,"root" ,"" );
+             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotheque" ,"root" ,"" );
              return con;
 
 
