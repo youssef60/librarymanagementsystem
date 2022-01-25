@@ -149,14 +149,29 @@ public class livreView extends javax.swing.JFrame {
     }
 
     public void initComboModelSearch(){
-       cmbModel = new DefaultComboBoxModel();
+        
+       String type = affichageCombo.getSelectedItem().toString();
+       String champ1;
+        cmbModel = new DefaultComboBoxModel();
 
       try{
             livreController.getModel().setResultSet(livreController.getDao().getRsAllLivreRegulier());
+             
             for(int i=0;i<livreController.getModel().getColumnCount() ; i++){
-
-                   if(livreController.getModel().getColumnName(i).equals("idCat")){
+                   
+                      
+                   if(livreController.getModel().getColumnName(i).equals("champ1") ){
+                        if(type.equals("livreRegulier") || type.equals("livreDemander") ){
+                                cmbModel.addElement("ISBN");
+                         }else if(type.equals("cassettesVideo") || type.equals("disqueCompact") ){
+                                cmbModel.addElement("Duree"); 
+                         }else if(type.equals("journal") || type.equals("periodic")){
+                                cmbModel.addElement("ISSN"); 
+                         }
+                    }
+                   if(livreController.getModel().getColumnName(i).equals("nomCat")){
                        cmbModel.addElement("categorie");
+                       
                   }else{
                    cmbModel.addElement(livreController.getModel().getColumnName(i));    
                   }
@@ -706,11 +721,19 @@ public class livreView extends javax.swing.JFrame {
     }//GEN-LAST:event_updateBtnActionPerformed
 
     private void supprimerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_supprimerBtnActionPerformed
-        // TODO add your handling code here:
+        int idDoc = Integer.parseInt(idLivreTxt.getText());
+            livreController.getLivre().setIdLivre(idDoc);
+            try{
+                   livreController.getDao().delete(livreController.getLivre());
+            }catch(SQLException e){
+               JOptionPane.showMessageDialog(rootPane, e);
+            }
+
+        initTable();
+        clearData();
     }//GEN-LAST:event_supprimerBtnActionPerformed
 
-    private void clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearActionPerformed
-        
+   public void clearData(){
         idLivreTxt.setText("");
         titreTxt.setText("");
         auteurTxt.setText("");
@@ -720,6 +743,11 @@ public class livreView extends javax.swing.JFrame {
        
         sauvegarderBtn.setEnabled(true);
         clear.setEnabled(false);
+   }
+    
+    private void clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearActionPerformed
+        
+        clearData();
            
     }//GEN-LAST:event_clearActionPerformed
 
@@ -860,19 +888,42 @@ public class livreView extends javax.swing.JFrame {
     }//GEN-LAST:event_chercherBtnActionPerformed
 
     private void chercherTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_chercherTxtKeyReleased
-        
-        String colName = comboSearch.getSelectedItem().toString();
         String word = chercherTxt.getText();
+        String type = affichageCombo.getSelectedItem().toString();
+        String colName = comboSearch.getSelectedItem().toString();
+        if(colName.equals("Duree") || colName.equals("ISBN") || colName.equals("ISSN") ) { colName = "champ1"; }
+        
         try{
-               ResultSet rs = livreController.getDao().search(colName, word);
-               livreController.getModel().setResultSet(rs); 
-
-             
+               if(type.equals("livreRegulier")){
+                   ResultSet rs = livreController.getDao().searchLivreRegulier(colName, word);
+                   livreController.getModel().setResultSet(rs);
+                   tblDisplay.setModel(livreController.getModel());
+               }else if(type.equals("livreDemander")){
+                   ResultSet rs = livreController.getDao().searchLivreDemander(colName, word);
+                   livreController.getModel().setResultSet(rs);
+                   tblDisplay.setModel(livreController.getModel());
+               }else if(type.equals("disqueCompact")){
+                   ResultSet rs = disqueCompactController.getDao().search(colName, word);
+                   disqueCompactController.getModel().setResultSet(rs);
+                   tblDisplay.setModel(disqueCompactController.getModel());
+               }else if(type.equals("cassettesVideo")){
+                   ResultSet rs = cassetteVideoController.getDao().search(colName, word);
+                   cassetteVideoController.getModel().setResultSet(rs);
+                   tblDisplay.setModel(disqueCompactController.getModel());
+               }else if(type.equals("journal")){
+                   ResultSet rs = journalController.getDao().search(colName, word);
+                   journalController.getModel().setResultSet(rs);
+                   tblDisplay.setModel(journalController.getModel());
+               }else if(type.equals("periodic")){
+                   ResultSet rs = periodicController.getDao().search(colName, word);
+                   periodicController.getModel().setResultSet(rs);
+                   tblDisplay.setModel(periodicController.getModel());
+               }
 
         }catch(SQLException e){
             JOptionPane.showMessageDialog(rootPane, e);
-            tblDisplay.setModel(livreController.getModel());
-}
+            
+        }
 
     }//GEN-LAST:event_chercherTxtKeyReleased
 
@@ -942,10 +993,10 @@ public class livreView extends javax.swing.JFrame {
 
       try{
             categorieController.getModel().setResultSet(categorieController.getDao().getRsAll());
-                   
+                 String cat;  
             for(int k=0;k<categorieController.getModel().getRowCount() ; k++){
 
-                   String cat = categorieController.getModel().getValueAt(k, 0) + "-" + categorieController.getModel().getValueAt(k, 1);
+                    cat = categorieController.getModel().getValueAt(k, 0) + "-" + categorieController.getModel().getValueAt(k, 1);
                    cmbModel.addElement( cat );  
                    if(getCategorieTable.equals(categorieController.getModel().getValueAt(k, 1)))  {
                          cmbModel.setSelectedItem(cat);
@@ -987,7 +1038,8 @@ public class livreView extends javax.swing.JFrame {
     }//GEN-LAST:event_chercherTxtActionPerformed
 
     private void affichageComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_affichageComboActionPerformed
-           initTable();
+         initComboModelSearch();  
+         initTable();
     }//GEN-LAST:event_affichageComboActionPerformed
     public boolean getRecordValidation(){
           if(livreController.getValidation().isEmpty(titreTxt.getText().trim())){

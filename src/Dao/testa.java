@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Models.Users;
+import java.sql.Connection;
 
 /**
  *
@@ -19,7 +20,7 @@ import Models.Users;
 public class testa {
     
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 //        System.out.println("controlers.test.main()");
 //         boolean b= new UsersDAO(). isExist("admin", "admin");
 //         
@@ -27,9 +28,9 @@ public class testa {
 //         else System.out.println("controlers.test.main()FALSE");
 
 System.out.println("controlers.testa.main()");
-UsersDAO ud = new UsersDAO();
- ArrayList<Users> ul = ud.getUserstList();
-        System.out.println( ul.get(0).getNom());
+
+ConexionBD.getConnection();
+
 
 //new UsersDAO().update2(4);
 

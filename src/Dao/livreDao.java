@@ -102,13 +102,21 @@ public ResultSet getRsAllLivreDemander() throws SQLException{
 }
 
 
-    public ResultSet search(String colName , String key ) throws SQLException{
+    public ResultSet searchLivreRegulier(String colName , String key ) throws SQLException{
 
-       String sql = "select idDoc,titre,nom_autheur,nbCopie,datePublication,champ1 ,nomCat from doc , categorie where  doc.idCat = categorie.idCat and  "+colName+" like '"+key+"%'  "; 
+       String sql = "select idDoc,titre,nom_autheur,nbCopie,datePublication,champ1 ,nomCat from doc , categorie where  doc.idCat = categorie.idCat and type = 'livreRegulier' and  "+colName+" like '"+key+"%'  "; 
        ResultSet rs = dbutil.select(sql);
        return rs;
 
-}
+    }
+
+    public ResultSet searchLivreDemander(String colName , String key ) throws SQLException{
+
+       String sql = "select idDoc,titre,nom_autheur,nbCopie,datePublication,champ1 ,nomCat from doc , categorie where  doc.idCat = categorie.idCat and type = 'livreDemander' and "+colName+" like '"+key+"%'  "; 
+       ResultSet rs = dbutil.select(sql);
+       return rs;
+
+    }
 
 
 

@@ -4,9 +4,7 @@
  */
 package Dao;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
-import com.mysql.jdbc.Statement;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +15,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Models.Users;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 /**
  *
  * @author PC
