@@ -4,15 +4,18 @@
  */
 package Views;
 
+import Controllers.ExemplaireController;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Asus
  */
 public class ExemplaireView extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ExemplaireView
-     */
+    ExemplaireController controller=new ExemplaireController();
+    
+    
     public ExemplaireView() {
         initComponents();
     }
@@ -137,13 +140,23 @@ public class ExemplaireView extends javax.swing.JFrame {
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setLayout(new java.awt.GridLayout());
+        jPanel2.setLayout(new java.awt.GridLayout(1, 0));
 
         btnNew.setText("New");
+        btnNew.setEnabled(false);
+        btnNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnNew);
 
         btnSave.setText("Save");
-        btnSave.setEnabled(false);
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnSave);
 
         btnClear.setText("Clear");
@@ -258,6 +271,30 @@ public class ExemplaireView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSearchActionPerformed
 
+    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnNewActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        if(getRecordValidation()== true){   
+            
+    }//GEN-LAST:event_btnSaveActionPerformed
+    }
+    
+    public boolean getRecordValidation(){
+        if(!controller.getValidation().isEmpty(txtIDExemplaire.getText().trim())){
+            JOptionPane.showMessageDialog(rootPane, "entrer un ID Exemplaire valide ");
+            txtIDExemplaire.requestFocus();
+            return false;
+        }
+        if(!controller.getValidation().isEmpty(txtIDDocument.getText().trim())){
+            JOptionPane.showMessageDialog(rootPane, "entrer un ID Document valide ");
+            txtIDDocument.requestFocus();
+            return false;
+        }
+        
+        return true;
+    }
     /**
      * @param args the command line arguments
      */

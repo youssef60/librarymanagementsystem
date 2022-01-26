@@ -22,12 +22,18 @@ public class ExemplaireDao  implements Dao<ExemplaireModel>{
         String sql = "insert into exemplaire (codeBar,idExemplaire,prix,dateAchat,idDoc) values ( ' "+ obj.getCodeBar()+ "' , '"+ obj.getIdExemplaire()+"' , '"+obj.getPrix()+"' , '"+obj.getDateAchat()+"' , '"+obj.getIdDoc()+"'  ) ";                                      
         if(dbutil.DML(sql)){
           return true;
+        }
+        String sql1= " update Doc set  nbCopie = nbCopie+1 where idDoc = "+obj.getIdDoc()+" "; 
+            if(dbutil.DML(sql1)){
+            return true;
+        }     
+        
+    return false;  
     }
-    return false;    }
 
     @Override
     public boolean update(ExemplaireModel obj) throws SQLException {
-        String sql = "update exemplaire set codeBar = '"+ obj.getCodeBar()+" ', prix = '"+obj.getPrix()+" ', dateAchat = '"+obj.getDateAchat()+" ', idDoc = '"+obj.getIdDoc()+"' where idExemplaire = "+obj.getIdExemplaire()+" "; 
+        String sql = "update exemplaire set codeBar = '"+ obj.getCodeBar()+" ', prix = '"+obj.getPrix()+" ', dateAchat = '"+obj.getDateAchat()+"' where idExemplaire = "+obj.getIdExemplaire()+" "; 
         if(dbutil.DML(sql)){
           return true;
     }
@@ -39,6 +45,10 @@ public class ExemplaireDao  implements Dao<ExemplaireModel>{
         if(dbutil.DML(sql)){
               return true;
         }
+        String sql1= " update Doc set  nbCopie = nbCopie-1 where idDoc = "+obj.getIdDoc()+" "; 
+        if(dbutil.DML(sql1)){
+            return true;
+        }       
         return false;
     }
 
