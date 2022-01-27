@@ -23,7 +23,7 @@ import java.sql.Statement;
  * @author PC
  */
 public class UsersDAO {
-    
+        DButil dbutil = new DButil();
         Connection con = null ;
 	Statement stmt = null ;
 	ResultSet res = null ;
@@ -69,10 +69,6 @@ else return false;
     {
         ArrayList<Users> usersList = new ArrayList();
         String query = "SELECT * FROM USERS";
- 
-       
-     
- 
         try {
  
             
@@ -191,7 +187,7 @@ public void delete(int id){
               
 }
 	
-     
+   
 		
 	
 }

@@ -12,41 +12,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import Models.Users;
 import java.sql.Connection;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author PC
  */
+
 public class testa {
-    
+    public static void calculPrix(){
+               Date dateDebut = new Date();
+               Date dateFin = new Date();
+               LocalDateTime d1 =  LocalDateTime.of(dateDebut.getYear(), dateDebut.getMonth(), dateDebut.getDay(), dateDebut.getHours(), dateDebut.getSeconds());
+               LocalDateTime d2 =  LocalDateTime.of(dateFin.getYear(), dateFin.getMonth(), dateFin.getDay(), dateFin.getHours(), dateFin.getSeconds());
+               Duration weeks = Duration.between(d1, d2);
+               System.out.println(weeks.getSeconds()/(60*60*24*7));
+              
+   }
     
     public static void main(String[] args) throws SQLException {
-//        System.out.println("controlers.test.main()");
-//         boolean b= new UsersDAO(). isExist("admin", "admin");
-//         
-//         if (b) System.out.println("controlers.test.main() TRUE");
-//         else System.out.println("controlers.test.main()FALSE");
 
-System.out.println("controlers.testa.main()");
-
-ConexionBD.getConnection();
-
-
-//new UsersDAO().update2(4);
-
-//Users u = new Users(6,"test","test","test",true);
-//
-//        try {
-//            
-//            
-//            new UsersDAO().update(u,null);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(testa.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (FileNotFoundException ex) {
-//            Logger.getLogger(testa.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
-
+   calculPrix();
 
          
     }

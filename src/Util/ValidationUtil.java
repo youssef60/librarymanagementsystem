@@ -4,12 +4,56 @@
  */
 package Util;
 
+import Dao.DBconnect;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 /**
  *
  * @author MHD
  */
 public class ValidationUtil {
    
+    public boolean isUnique(String code , String table ,String field) throws SQLException{
+          String sql = "select count("+field+") from "+table+"  where "+field+" = '"+ code +"' ";
+           Connection con = DBconnect.getConnection();
+           Statement st = con.createStatement();  
+           ResultSet rs = st.executeQuery(sql);
+           if(rs.next()){
+                   if(rs.getInt(1) == 1  ){
+                       return true;
+                    }
+           }
+           return false;
+   }     
+
+    public boolean isExist(String code , String table , String field) throws SQLException{
+          String sql = "select count("+field+") from "+table+"  where "+field+" = '"+ code +"' ";
+           System.out.println(sql);
+           Connection con = DBconnect.getConnection();
+           Statement st = con.createStatement();  
+           ResultSet rs = st.executeQuery(sql);  
+           System.out.println("passed1");
+           if(rs.next()){
+                   if(rs.getInt(1) != 0  ){
+                       System.out.println("passed2");
+                       return true;
+                    }
+           }
+           return false;
+   } 
+
+
+
+
+
+
+
+
+
+ 
      public boolean isEmpty(String data){
 
      if(data.isEmpty()){
