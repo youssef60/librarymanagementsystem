@@ -14,10 +14,6 @@ import java.sql.Statement;
  * @author MHD
  */
 public class DButil {
-
-    
-
-    
     public boolean DML(String sql) throws SQLException{
         
          Connection con = DBconnect.getConnection();

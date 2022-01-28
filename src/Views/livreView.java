@@ -72,7 +72,7 @@ public class livreView extends javax.swing.JFrame {
     }
 
     public void initTable(){
-             
+             System.out.println(affichageCombo.getSelectedItem());
         if(affichageCombo.getSelectedItem().equals("livreRegulier")){
             try{
                 ResultSet rs = livreController.getDao().getRsAllLivreRegulier();
@@ -338,11 +338,6 @@ public class livreView extends javax.swing.JFrame {
         jLabel9.setText("Chercher par :");
 
         comboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Titre", "Auteur", " " }));
-        comboSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboSearchActionPerformed(evt);
-            }
-        });
 
         chercherTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1046,10 +1041,6 @@ public class livreView extends javax.swing.JFrame {
          initComboModelSearch();  
          initTable();
     }//GEN-LAST:event_affichageComboActionPerformed
-
-    private void comboSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSearchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboSearchActionPerformed
     public boolean getRecordValidation(){
           if(livreController.getValidation().isEmpty(titreTxt.getText().trim())){
                 JOptionPane.showMessageDialog(rootPane, "plz enter the titre");
