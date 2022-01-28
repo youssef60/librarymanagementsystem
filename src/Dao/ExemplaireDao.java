@@ -27,8 +27,7 @@ public class ExemplaireDao  implements Dao<ExemplaireModel>{
             if(dbutil.DML(sql1)){
             return true;
         }     
-        
-    return false;  
+         return false;  
     }
 
     @Override
@@ -36,12 +35,13 @@ public class ExemplaireDao  implements Dao<ExemplaireModel>{
         String sql = "update exemplaire set codeBar = '"+ obj.getCodeBar()+" ', prix = '"+obj.getPrix()+" ', dateAchat = '"+obj.getDateAchat()+"' where idExemplaire = "+obj.getIdExemplaire()+" "; 
         if(dbutil.DML(sql)){
           return true;
+        }
+        return false;     
     }
-    return false;     }
 
     @Override
     public boolean delete(ExemplaireModel obj) throws SQLException {
-        String sql = "delete from exemplaire where idExempalaire = "+obj.getIdExemplaire()+" "; 
+        String sql = "delete from exemplaire where idExemplaire = "+obj.getIdExemplaire()+" "; 
         if(dbutil.DML(sql)){
               return true;
         }

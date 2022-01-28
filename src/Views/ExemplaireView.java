@@ -5,6 +5,11 @@
 package Views;
 
 import Controllers.ExemplaireController;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,11 +18,49 @@ import javax.swing.JOptionPane;
  */
 public class ExemplaireView extends javax.swing.JFrame {
 
+    
     ExemplaireController controller=new ExemplaireController();
+    int IDExemplaire;
+    String CodeBare;
+    double Prix;
+    String DateAchat;
+    int IdDoc;
+    
+    DefaultComboBoxModel cmbModel;
+    
     
     
     public ExemplaireView() {
         initComponents();
+        initTable();
+        initComboBox();
+        
+    }
+    
+    public void initComboBox(){
+        cmbModel = new DefaultComboBoxModel();
+        
+        try {
+            controller.getModel().setResultSet(controller.getDao().getRsAll());
+            String colname[]=new String[controller.getModel().getColumnCount()];
+            for(int i=0;i<controller.getModel().getColumnCount();i++){
+                colname[i]=controller.getModel().getColumnName(i);
+                cmbModel.addElement(colname[i]);
+            }       
+           } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex);
+        }
+        
+        cmbSearch.setModel(cmbModel);
+    }
+    
+    public void initTable(){
+        try {
+            controller.getModel().setResultSet(controller.getDao().getRsAll());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex);
+        }
+        tblDisplay.setModel(controller.getModel());
     }
 
     /**
@@ -44,7 +87,7 @@ public class ExemplaireView extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblExemplaire = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblDisplay = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         cmbSearch = new javax.swing.JComboBox<>();
@@ -53,7 +96,6 @@ public class ExemplaireView extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         btnNew = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
-        btnClear = new javax.swing.JButton();
         btnFind = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
@@ -91,7 +133,7 @@ public class ExemplaireView extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblExemplaire);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblDisplay.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -102,7 +144,15 @@ public class ExemplaireView extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        tblDisplay.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDisplayMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                tblDisplayMouseReleased(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tblDisplay);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -114,6 +164,11 @@ public class ExemplaireView extends javax.swing.JFrame {
         txtSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSearchActionPerformed(evt);
+            }
+        });
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
             }
         });
 
@@ -159,18 +214,30 @@ public class ExemplaireView extends javax.swing.JFrame {
         });
         jPanel2.add(btnSave);
 
-        btnClear.setText("Clear");
-        jPanel2.add(btnClear);
-
         btnFind.setText("Find");
+        btnFind.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFindActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnFind);
 
         btnDelete.setText("Delete");
         btnDelete.setEnabled(false);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnDelete);
 
         btnUpdate.setText("Update");
         btnUpdate.setEnabled(false);
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnUpdate);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -203,7 +270,7 @@ public class ExemplaireView extends javax.swing.JFrame {
                                             .addComponent(txtDateAchat)
                                             .addComponent(txtIDExemplaire)
                                             .addComponent(txtIDDocument)))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE))))
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(155, 155, 155)
@@ -257,11 +324,14 @@ public class ExemplaireView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -272,22 +342,161 @@ public class ExemplaireView extends javax.swing.JFrame {
     }//GEN-LAST:event_txtSearchActionPerformed
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        // TODO add your handling code here:
+        txtIDExemplaire.setText("");
+        txtCodeBare.setText("");
+        txtPrix.setText("");
+        txtDateAchat.setText("");
+        txtIDDocument.setText("");
+        
+        btnSave.setEnabled(true);
+        btnNew.setEnabled(false);
+        txtIDExemplaire.setEditable(true);
+        txtIDDocument.setEditable(true);
+        
+        btnUpdate.setEnabled(false);
+        btnDelete.setEnabled(false);
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if(getRecordValidation()== true){   
             
+            IDExemplaire=Integer.parseInt(txtIDExemplaire.getText().trim());
+            CodeBare=txtCodeBare.getText().trim();
+            Prix=Double.parseDouble(txtPrix.getText().trim());
+            DateAchat=txtDateAchat.getText().trim();
+            IdDoc=Integer.parseInt(txtIDDocument.getText().trim());
+            
+            
+      
+            controller.getExemplaire().setIdExemplaire(IDExemplaire);
+            controller.getExemplaire().setCodeBar(CodeBare);
+            controller.getExemplaire().setPrix(Prix);
+            controller.getExemplaire().setDateAchat(DateAchat);
+            controller.getExemplaire().setIdDoc(IdDoc);
+            
+            
+            
+            try {
+                controller.getDao().insert(controller.getExemplaire());
+                JOptionPane.showMessageDialog(rootPane, "Exemplaire Enregistré");
+                btnNew.setEnabled(true);
+                btnSave.setEnabled(false);
+                initTable(); // afficher les donnees ajouter directement dans la table
+            } catch (SQLException ex) {
+                Logger.getLogger(ExemplaireView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                
+
+            
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
-    }
+
+    private void btnFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindActionPerformed
+        txtSearch.setEditable(true);
+    }//GEN-LAST:event_btnFindActionPerformed
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        String colName= cmbSearch.getSelectedItem().toString();
+        String word = txtSearch.getText().trim();
+        
+        try {
+            ResultSet rs= controller.getDao().search(colName, word);
+            controller.getModel().setResultSet(rs);
+            tblDisplay.setModel(controller.getModel());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex);
+        }
+    }//GEN-LAST:event_txtSearchKeyReleased
+
+    private void tblDisplayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDisplayMouseClicked
+      
+    }//GEN-LAST:event_tblDisplayMouseClicked
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        String IDExemplaire = txtIDExemplaire.getText();
+        String CodeBare = txtCodeBare.getText();
+        String Prix = txtPrix.getText();
+        String DateAchat = txtDateAchat.getText();
+        String IDDocument = txtIDDocument.getText();
+        
+        controller.getExemplaire().setIdExemplaire(Integer.parseInt(IDExemplaire));
+        controller.getExemplaire().setCodeBar(CodeBare);
+        controller.getExemplaire().setPrix(Double.parseDouble(Prix));
+        controller.getExemplaire().setDateAchat(DateAchat);
+        controller.getExemplaire().setIdDoc(Integer.parseInt(IDDocument));
+
+        
+        
+        
+        try {
+            controller.getDao().update(controller.getExemplaire());
+            JOptionPane.showMessageDialog(rootPane, "les données sont bien modifiées");
+            initTable();
+            
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex);
+        }
+        
+
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void tblDisplayMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDisplayMouseReleased
+        int i= tblDisplay.getSelectedRow();
+        
+        
+        txtCodeBare.setText(controller.getModel().getValueAt(i, 0).toString());
+        txtIDExemplaire.setText(controller.getModel().getValueAt(i, 1).toString());
+        txtPrix.setText(controller.getModel().getValueAt(i, 2).toString());
+        txtDateAchat.setText(controller.getModel().getValueAt(i, 3).toString());
+        txtIDDocument.setText(controller.getModel().getValueAt(i, 4).toString());
+
+        btnUpdate.setEnabled(true);
+        btnDelete.setEnabled(true);
+        btnSave.setEnabled(false);
+        btnNew.setEnabled(true);
+        
+        txtIDExemplaire.setEditable(false);  // whene update ; u cant update these two fields
+        txtIDDocument.setEditable(false);  //
+    }//GEN-LAST:event_tblDisplayMouseReleased
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        String IDExemplaire = txtIDExemplaire.getText();
+        
+        controller.getExemplaire().setIdExemplaire(Integer.parseInt(IDExemplaire));
+        
+        try {
+            controller.getDao().delete(controller.getExemplaire());
+            JOptionPane.showMessageDialog(rootPane, "l'exemplaire a ete supprimé");
+            initTable();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex);
+        }
+        
+    }//GEN-LAST:event_btnDeleteActionPerformed
+    
     
     public boolean getRecordValidation(){
-        if(!controller.getValidation().isEmpty(txtIDExemplaire.getText().trim())){
+        if(controller.getValidation().isEmpty(txtIDExemplaire.getText().trim())){
             JOptionPane.showMessageDialog(rootPane, "entrer un ID Exemplaire valide ");
             txtIDExemplaire.requestFocus();
             return false;
         }
-        if(!controller.getValidation().isEmpty(txtIDDocument.getText().trim())){
+        else if(controller.getValidation().isEmpty(txtCodeBare.getText().trim())){
+            JOptionPane.showMessageDialog(rootPane, "entrer un code bare valide ");
+            txtCodeBare.requestFocus();
+            return false;
+        }
+        else if(controller.getValidation().isEmpty(txtPrix.getText().trim())){
+            JOptionPane.showMessageDialog(rootPane, "entrer un prix valide ");
+            txtPrix.requestFocus();
+            return false;
+        }
+        else if(controller.getValidation().isEmpty(txtDateAchat.getText().trim())){
+            JOptionPane.showMessageDialog(rootPane, "entrer une date d'achat valide ");
+            txtDateAchat.requestFocus();
+            return false;
+        }
+        else if(controller.getValidation().isEmpty(txtIDDocument.getText().trim())){
             JOptionPane.showMessageDialog(rootPane, "entrer un ID Document valide ");
             txtIDDocument.requestFocus();
             return false;
@@ -331,7 +540,6 @@ public class ExemplaireView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnClear;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnFind;
     private javax.swing.JButton btnNew;
@@ -345,13 +553,13 @@ public class ExemplaireView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
     private javax.swing.JLabel lblCodeBare;
     private javax.swing.JLabel lblDateAchat;
     private javax.swing.JLabel lblIDDocument;
     private javax.swing.JLabel lblIDExemplaire;
     private javax.swing.JLabel lblPrix;
     private javax.swing.JLabel lblSearch;
+    private javax.swing.JTable tblDisplay;
     private javax.swing.JTable tblExemplaire;
     private javax.swing.JTextField txtCodeBare;
     private javax.swing.JTextField txtDateAchat;
